@@ -86,18 +86,17 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 		}
 	}
 
-	_resp, err := r.cli.Do(r.req)
+	respObj, err := r.cli.Do(r.req)
 
 	resp := &Response{
-					resp: _resp,
+					resp: respObj,
 					req:  r.req,
 					err:  err,
 				}
 
 	if err == nil {
-		body, err := ioutil.ReadAll(_resp.Body)
-		_resp.Body.Close()
-
+		body, err := ioutil.ReadAll(respObj.Body)
+		defer respObj.Body.Close()
 		resp.body = body
 		resp.err = err
 	}
@@ -159,7 +158,9 @@ func (r *Request) parseQuery() {
 				for _, vvv := range vv {
 					q.Add(k, vvv)
 				}
+				continue
 			}
+			q.Set(k, fmt.Sprintf("%v", v))
 		}
 		r.req.URL.RawQuery = q.Encode()
 	}
@@ -215,12 +216,15 @@ func (r *Request) parseBody() {
 		for k, v := range r.options.FormParams {
 			if vv, ok := v.(string); ok {
 				values.Set(k, vv)
+				continue
 			}
 			if vv, ok := v.([]string); ok {
 				for _, vvv := range vv {
 					values.Add(k, vvv)
 				}
+				continue
 			}
+			values.Set(k, fmt.Sprintf("%v", v))
 		}
 		r.body = strings.NewReader(values.Encode())
 
@@ -232,11 +236,13 @@ func (r *Request) parseBody() {
 		if _, ok := r.options.Headers["Content-Type"]; !ok {
 			r.options.Headers["Content-Type"] = CONTENT_TYPE_JSON
 		}
-
+		if v, ok := r.options.JSON.(string);ok {
+			r.body = strings.NewReader(v)
+			return
+		}
 		b, err := json.Marshal(r.options.JSON)
 		if err == nil {
 			r.body = bytes.NewReader(b)
-
 			return
 		}
 	}
@@ -256,7 +262,7 @@ func (r *Request) parseBody() {
 				return
 			}
 		default:
-			b, err := xml.Marshal(r.options.JSON)
+			b, err := xml.Marshal(r.options.XML)
 			if err == nil {
 				r.body = bytes.NewBuffer(b)
 			}

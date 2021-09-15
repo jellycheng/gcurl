@@ -79,3 +79,106 @@ func TestMap2XML(t *testing.T)  {
 	fmt.Println(string(con))
 
 }
+
+// go test -run="TestPost"
+func TestPost(t *testing.T)  {
+	resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+		Headers: map[string]interface{}{
+			"Content-Type": "application/x-www-form-urlencoded",
+			"User-Agent":    "gcurl/1.0",
+			"Authorization": "Bearer access_token1234",
+		},
+		Query: map[string]interface{}{
+			"user": 123,
+			"tags[]": []string{"学习力", "tagN"},
+			"nickname": "大大",
+			"isok":false,
+		},
+		FormParams: map[string]interface{}{
+			"name":      "admin",
+			"age":       24,
+			"interests[]": []string{"篮球", "旅游", "听音乐"},
+			"isAdmin":   true,
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		body, _ := resp.GetBody()
+		fmt.Println(body)
+	}
+
+}
+
+// go test -run="TestPostjson"
+func TestPostjson(t *testing.T)  {
+	resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+		Headers: map[string]interface{}{
+			"User-Agent":    "gcurl/1.0",
+			"Authorization": "Bearer access_token1234",
+		},
+		Query: map[string]interface{}{
+			"user": 123,
+			"tags[]": []string{"学习力", "tagN"},
+			"nickname": "大大",
+			"isok":false,
+		},
+		JSON: map[string]interface{}{
+			"name":      "admin",
+			"age":       24,
+			"interests": []string{"篮球", "旅游", "听音乐"},
+			"isAdmin":   true,
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		body, _ := resp.GetBody()
+		fmt.Println(body)
+	}
+
+	strJson := `{"age":26,"name":"admin123"}`
+	if resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+		Headers: map[string]interface{}{
+			"User-Agent":    "gcurl/1.0",
+			"Authorization": "Bearer access_token1234",
+		},
+		Query: map[string]interface{}{
+			"user": 123,
+			"tags[]": []string{"学习力", "tagN"},
+			"nickname": "大大",
+			"isok":false,
+		},
+		JSON: strJson,
+	}); err != nil {
+		fmt.Println(err)
+	} else {
+		body, _ := resp.GetBody()
+		fmt.Println(body)
+	}
+
+	if resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+		Headers: map[string]interface{}{
+			"User-Agent":    "gcurl/1.0",
+			"Authorization": "Bearer access_token1234",
+		},
+		Query: map[string]interface{}{
+			"user": 123,
+			"tags[]": []string{"学习力", "tagN"},
+			"nickname": "大大123",
+			"isok":false,
+		},
+		JSON: struct {
+			Key1 string   `json:"key1"`
+			Key2 []string `json:"key2"`
+			Key3 int      `json:"key3"`
+			Key4 bool      `json:"key4"`
+		}{"val1", []string{"val2-1", "val2-2"}, 333,true},
+	}); err != nil {
+		fmt.Println(err)
+	} else {
+		body, _ := resp.GetBody()
+		fmt.Println(body)
+	}
+
+}
