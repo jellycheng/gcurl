@@ -8,7 +8,7 @@ import (
 
 func NewClient() *Request {
 	req := &Request{}
-	req.options = Options{}
+	req.options = NewOptions()
 	return req
 }
 

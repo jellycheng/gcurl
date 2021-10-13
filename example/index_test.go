@@ -6,8 +6,27 @@ import (
 	"testing"
 )
 
-// go test -run="TestGet"
-func TestGet(t *testing.T)  {
+// go test -run="TestGetLog"
+func TestGetLog(t *testing.T)  {
+	cli := gcurl.NewClient()
+	o := cli.GetOptions()
+	o.Debug = true
+	o.Log = gcurl.NewDefaultLogger()
+	//o.Log = nil
+	cli.SetOptions(o)
+	fmt.Println(o.Debug)
+	resp, err := cli.Get("http://devapi.nfangbian.com/test.php?a=1&b=hi123")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		respBody,_ := resp.GetBody()
+		fmt.Println("接口响应结果： ", respBody.GetContents())
+	}
+	cli.Logf("请求完毕")
+}
+
+// go test -run="TestGet2"
+func TestGet2(t *testing.T)  {
 	cli := gcurl.NewClient()
 	resp, err := cli.Get("http://devapi.nfangbian.com/test.php?a=1&b=hi123")
 	if err != nil {

@@ -82,7 +82,7 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 	if r.options.Debug {
 		dump, err := httputil.DumpRequest(r.req, true)
 		if err == nil {
-			fmt.Printf("\n%s\n\n", dump)
+			r.Logf("%s", string(dump))
 		}
 	}
 
@@ -102,16 +102,13 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 	}
 
 	if err != nil {
-		if r.options.Debug {
-			fmt.Println(err)
-		}
-
+		r.Logf(err.Error())
 		return resp, err
 	}
 
 	if r.options.Debug {
 		body, _ := resp.GetBody()
-		fmt.Println(string(body))
+		r.Logf(body.GetContents())
 	}
 
 	return resp, nil
@@ -271,3 +268,18 @@ func (r *Request) parseBody() {
 
 	return
 }
+
+func (r *Request) Logf(format string, param ...interface{}) {
+	if r.options.Log != nil {
+		r.options.Log.Printf(format, param...)
+	}
+}
+
+func (r *Request) GetOptions() Options {
+	return r.options
+}
+
+func (r *Request) SetOptions(o Options) {
+	r.options = o
+}
+

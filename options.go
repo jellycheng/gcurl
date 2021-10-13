@@ -4,6 +4,7 @@ import "time"
 
 type Options struct {
 	Debug      bool
+	Log        WriterLogger
 	Timeout    time.Duration
 	Query      interface{}
 	Headers    map[string]interface{}
