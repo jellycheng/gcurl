@@ -206,7 +206,7 @@ func (r *Request) parseBody() {
 	// application/x-www-form-urlencoded
 	if r.options.FormParams != nil {
 		if _, ok := r.options.Headers["Content-Type"]; !ok {
-			r.options.Headers["Content-Type"] = CONTENT_TYPE_FORM
+			r.options.Headers["Content-Type"] = ContentTypeForm
 		}
 
 		values := url.Values{}
@@ -231,7 +231,7 @@ func (r *Request) parseBody() {
 	// application/json
 	if r.options.JSON != nil {
 		if _, ok := r.options.Headers["Content-Type"]; !ok {
-			r.options.Headers["Content-Type"] = CONTENT_TYPE_JSON
+			r.options.Headers["Content-Type"] = ContentTypeJson
 		}
 		if v, ok := r.options.JSON.(string);ok {
 			r.body = strings.NewReader(v)
@@ -247,7 +247,7 @@ func (r *Request) parseBody() {
 	// application/xml
 	if r.options.XML != nil {
 		if _, ok := r.options.Headers["Content-Type"]; !ok {
-			r.options.Headers["Content-Type"] = CONTENT_TYPE_XML
+			r.options.Headers["Content-Type"] = ContentTypeXml
 		}
 
 		switch r.options.XML.(type) {

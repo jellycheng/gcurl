@@ -1,11 +1,11 @@
 package gcurl
 
 const (
-	CONTENT_TYPE_JSON  = "application/json"
-	CONTENT_TYPE_FORM  = "application/x-www-form-urlencoded"
-	CONTENT_TYPE_OCTET = "application/octet-stream"
-	CONTENT_TYPE_MULTIPART = "multipart/form-data"
-	CONTENT_TYPE_XML  = "application/xml"
-	CONTENT_TYPE_TEXTHTML = "text/html"
-	CONTENT_TYPE_TEXTXML = "text/xml"
+	ContentTypeJson      = "application/json"
+	ContentTypeForm      = "application/x-www-form-urlencoded"
+	ContentTypeOctet     = "application/octet-stream"
+	ContentTypeMultipart = "multipart/form-data"
+	ContentTypeXml       = "application/xml"
+	ContentTypeTexthtml  = "text/html"
+	ContentTypeTextxml   = "text/xml"
 )
