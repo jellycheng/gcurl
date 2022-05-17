@@ -258,6 +258,9 @@ func (r *Request) parseBody() {
 				r.body = bytes.NewBuffer(b)
 				return
 			}
+		case string:
+			r.body = strings.NewReader(r.options.XML.(string))
+			return
 		default:
 			b, err := xml.Marshal(r.options.XML)
 			if err == nil {
