@@ -1,5 +1,7 @@
 package gcurl
 
+import "time"
+
 const (
 	ContentTypeJson      = "application/json"
 	ContentTypeForm      = "application/x-www-form-urlencoded"
@@ -8,4 +10,13 @@ const (
 	ContentTypeXml       = "application/xml"
 	ContentTypeTexthtml  = "text/html"
 	ContentTypeTextxml   = "text/xml"
+)
+
+const (
+	TraceIdHeader = "X-Trace-Id"
+)
+
+const (
+	// DefaultTimeout 默认超时值
+	DefaultTimeout = 15 * time.Second
 )

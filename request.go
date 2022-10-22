@@ -13,14 +13,13 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type Request struct {
 	options Options
-	cli  *http.Client
-	req  *http.Request
-	body io.Reader
+	cli     *http.Client
+	req     *http.Request
+	body    io.Reader
 }
 
 func (r *Request) Get(uri string, opts ...Options) (*Response, error) {
@@ -89,10 +88,10 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 	respObj, err := r.cli.Do(r.req)
 
 	resp := &Response{
-					resp: respObj,
-					req:  r.req,
-					err:  err,
-				}
+		resp: respObj,
+		req:  r.req,
+		err:  err,
+	}
 
 	if err == nil {
 		body, err := ioutil.ReadAll(respObj.Body)
@@ -116,7 +115,7 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 
 func (r *Request) parseOptions() {
 	if r.options.Timeout == 0 {
-		r.options.Timeout = 15 * time.Second
+		r.options.Timeout = DefaultTimeout
 	}
 
 }
@@ -233,7 +232,7 @@ func (r *Request) parseBody() {
 		if _, ok := r.options.Headers["Content-Type"]; !ok {
 			r.options.Headers["Content-Type"] = ContentTypeJson
 		}
-		if v, ok := r.options.JSON.(string);ok {
+		if v, ok := r.options.JSON.(string); ok {
 			r.body = strings.NewReader(v)
 			return
 		}
@@ -285,4 +284,3 @@ func (r *Request) GetOptions() Options {
 func (r *Request) SetOptions(o Options) {
 	r.options = o
 }
-

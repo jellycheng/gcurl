@@ -2,7 +2,7 @@ package gcurl
 
 import "fmt"
 
-// 日志接口
+// WriterLogger 日志接口
 type WriterLogger interface {
 	Printf(string, ...interface{})
 }

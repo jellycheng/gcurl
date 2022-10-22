@@ -16,5 +16,5 @@ type Options struct {
 }
 
 func NewOptions() Options {
-	return Options{Debug: false, Timeout: 15 * time.Second,}
+	return Options{Debug: false, Timeout: 15 * time.Second}
 }

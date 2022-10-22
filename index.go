@@ -45,7 +45,7 @@ func Map2XML(m map[string]string, rootName ...string) ([]byte, error) {
 	if rootTag == "" {
 		rootTag = "xml"
 	}
-	d := MyXmldata{XMLName:xml.Name{Local: rootTag}, Data: m}
+	d := MyXmldata{XMLName: xml.Name{Local: rootTag}, Data: m}
 	bt, err := xml.Marshal(d)
 	if err != nil {
 		return nil, err

@@ -24,7 +24,6 @@ func (me ResponseBody) ToByte() []byte {
 	return me
 }
 
-
 type Response struct {
 	resp *http.Response
 	req  *http.Request
@@ -48,7 +47,7 @@ func (me *Response) IsTimeout() bool {
 	if me.err == nil {
 		return false
 	}
-	if netErr, ok := me.err.(net.Error);!ok {
+	if netErr, ok := me.err.(net.Error); !ok {
 		return false
 	} else if netErr.Timeout() {
 		return true
@@ -56,7 +55,7 @@ func (me *Response) IsTimeout() bool {
 	return false
 }
 
-// 获取所有请求头，也可通过 对象.GetRequest().Header获取原生http.Header类型
+// GetHeaders 获取所有请求头，也可通过 对象.GetRequest().Header获取原生http.Header类型
 func (me *Response) GetHeaders() map[string][]string {
 	return me.resp.Header
 }
@@ -71,7 +70,7 @@ func (me *Response) GetHeaderSlice(name string) []string {
 	return nil
 }
 
-// 不区分大小写获取请求头内容
+// GetHeader 不区分大小写获取请求头内容
 func (me *Response) GetHeader(name string) string {
 	header := me.GetHeaderSlice(name)
 	if len(header) > 0 {
@@ -80,7 +79,7 @@ func (me *Response) GetHeader(name string) string {
 	return ""
 }
 
-// 不区分大小写判断请求头是否存在
+// HasHeader 不区分大小写判断请求头是否存在
 func (me *Response) HasHeader(name string) bool {
 	headers := me.resp.Header
 	for k := range headers {
