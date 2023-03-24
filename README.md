@@ -289,3 +289,73 @@ func main() {
 }
 
 ```
+
+## 并发请求示例
+```
+使用协程发起并发请求示例
+package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/jellycheng/gcurl"
+	"sync"
+)
+
+func main() {
+	wg := gcurl.NewWg()
+	result := sync.Map{}
+	ctx1, _ := context.WithCancel(context.Background())
+	wg.RunApi(ctx1, func(ctx2 context.Context) {
+		// 接口1
+		resp, err := gcurl.Get("http://devapi.nfangbian.com/test.php?a=1&b=hi123")
+		if err != nil {
+			result.Store("api_1", err.Error())
+		} else {
+			respBody, _ := resp.GetBody()
+			// 获取接口响应内容
+			result.Store("api_1", respBody.GetContents())
+		}
+
+	})
+	wg.RunApi(ctx1, func(ctx2 context.Context) {
+		// 接口2
+		resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+			Headers: map[string]interface{}{
+				"Content-Type":      gcurl.ContentTypeForm,
+				"User-Agent":        "gcurl/1.0",
+				"Authorization":     "Bearer access_token1234",
+				gcurl.TraceIdHeader: "trace-id-123x",
+			},
+			Query: map[string]interface{}{
+				"user":     123,
+				"tags[]":   []string{"学习力", "tagN"},
+				"nickname": "大大",
+				"a":        99,
+				"isok":     false,
+			},
+			FormParams: map[string]interface{}{
+				"name":        "admin",
+				"age":         24,
+				"interests[]": []string{"篮球", "旅游", "听音乐"},
+				"isAdmin":     true,
+			},
+		})
+		if err != nil {
+			result.Store("api_2", err.Error())
+		} else {
+			respBody, _ := resp.GetBody()
+			result.Store("api_2", respBody.GetContents())
+		}
+	})
+	
+	wg.Wait()
+	// 统一处理api结果
+	result.Range(func(key, value interface{}) bool {
+		fmt.Println(key, value)
+		return true
+	})
+
+}
+
+```
