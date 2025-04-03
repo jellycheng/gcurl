@@ -1,6 +1,7 @@
 package gcurl
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -33,4 +34,9 @@ func IsAllowFileExt(ext string, allowExt string) bool {
 		}
 	}
 	return false
+}
+
+// 拼接阿里云oss和腾讯云cos的图片地址
+func PingImgUrl(endpoint, bucketKey string) string {
+	return fmt.Sprintf("%s/%s", strings.TrimRight(endpoint, "/"), bucketKey)
 }

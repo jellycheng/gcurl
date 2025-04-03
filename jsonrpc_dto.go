@@ -20,7 +20,7 @@ type JsonRpcRespDto struct {
 	Id      interface{}      `json:"id"`
 }
 
-//错误对象
+// 错误对象
 type RPCError struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
