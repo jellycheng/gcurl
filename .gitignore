@@ -14,5 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 vendor/
 cjs_test.go
+cjs.go
 go.sum
 .DS_Store

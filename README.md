@@ -2,6 +2,7 @@
 ```
 封装http请求，支持get、post、put、delete等请求方式，支持上传文件
 封装jsonrpc协议发起post请求
+封装sse协议
 
 ```
 
@@ -65,7 +66,7 @@ func main() {
 }
 ```
 
-## post请求示例
+## post请求示例1
 ```
 参数优先级FormParams > JSON > XML
 
@@ -290,7 +291,7 @@ func main() {
 
 ```
 
-## 并发请求示例
+## 并发请求示例1
 ```
 使用协程发起并发请求示例
 package main
@@ -318,6 +319,7 @@ func main() {
 		}
 
 	})
+	
 	wg.RunApi(ctx1, func(ctx2 context.Context) {
 		// 接口2
 		resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
@@ -356,6 +358,59 @@ func main() {
 		return true
 	})
 
+}
+
+```
+
+## sse示例1
+```
+package main
+
+import (
+	"fmt"
+	"github.com/jellycheng/gcurl"
+	"net/http"
+	"time"
+)
+
+func sseHandler(w http.ResponseWriter, r *http.Request) {
+	// 设置 SSE 所需的 HTTP 头
+	w.Header().Set("Content-Type", "text/event-stream; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Access-Control-Allow-Origin", "*") // 允许跨域
+
+	// 检查是否支持流式响应
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
+		return
+	}
+
+	token := r.Header.Get("token")
+	if token == "" {
+		token = r.URL.Query().Get("token")
+	}
+	id := r.URL.Query().Get("id")
+	content := r.URL.Query().Get("content")
+	// 模拟实时数据推送
+	for {
+
+		date := time.Now().Format("2006-01-02 15:04:05")
+		sseMsg := gcurl.NewSseMsg()
+		sseMsg.SetData(fmt.Sprintf("收到参数token：%s,id=%s,content=%s,响应时间：%s", token, id, content, date))
+		// 响应内容
+		w.Write(sseMsg.FormatMsg())
+		flusher.Flush()
+
+		time.Sleep(2 * time.Second)
+	}
+}
+
+func main() {
+	http.HandleFunc("/sse/events", sseHandler)
+	http.ListenAndServe(":8989", nil)
+	// 访问地址示例：http://127.0.0.1:8989/sse/events?id=123&token=xxxx&content=您好
 }
 
 ```
