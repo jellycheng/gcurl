@@ -414,3 +414,130 @@ func main() {
 }
 
 ```
+
+## 传递cookie示例
+```
+写法1:
+    package main
+    
+    import (
+        "fmt"
+        "github.com/jellycheng/gcurl"
+    )
+    
+    func main() {
+        resp, err := gcurl.Get("http://qsh.xxx.com/gpc.php?a=1&b=hi123", gcurl.Options{
+            // 设置请求头
+            Headers: map[string]interface{}{
+                "User-Agent":        "gcurl/1.0",
+                "Accept":            gcurl.ContentTypeJson,
+                "X-USERID":          123456,
+                "X-Tag":             []string{"go", "php", "java"},
+                gcurl.TraceIdHeader: "traceid-abc-123-xyz",
+            },
+            Cookies: map[string]string{ // 设置cookie
+                "PHPSESSID": "123456789",
+                "ticket":    "xxxticket",
+            },
+        })
+        if err != nil {
+            fmt.Println(err)
+        } else {
+            respBody, _ := resp.GetBody()
+            // 获取接口响应内容
+            fmt.Println(respBody.GetContents())
+        }
+    }
+
+写法2:
+    package main
+    
+    import (
+        "fmt"
+        "github.com/jellycheng/gcurl"
+    )
+    
+    func main() {
+        resp, err := gcurl.Get("http://qsh.xxx.com/gpc.php?a=1&b=hi123", gcurl.Options{
+            // 设置请求头
+            Headers: map[string]interface{}{
+                "User-Agent":        "gcurl/1.0",
+                "Accept":            gcurl.ContentTypeJson,
+                "X-USERID":          123456,
+                "X-Tag":             []string{"go", "php", "java"},
+                gcurl.TraceIdHeader: "traceid-abc-123-xyz",
+            },
+            Cookies: "PHPSESSID=123456789; ticket=xxxticket", // 设置cookie
+        })
+        if err != nil {
+            fmt.Println(err)
+        } else {
+            respBody, _ := resp.GetBody()
+            // 获取接口响应内容
+            fmt.Println(respBody.GetContents())
+        }
+    }
+
+写法3:
+    package main
+    
+    import (
+        "fmt"
+        "github.com/jellycheng/gcurl"
+    )
+    
+    func main() {
+        resp, err := gcurl.Get("http://qsh.xxx.com/gpc.php?a=1&b=hi123", gcurl.Options{
+            // 设置请求头
+            Headers: map[string]interface{}{
+                "User-Agent":        "gcurl/1.0",
+                "Accept":            gcurl.ContentTypeJson,
+                "X-USERID":          123456,
+                "X-Tag":             []string{"go", "php", "java"},
+                gcurl.TraceIdHeader: "traceid-abc-123-xyz",
+                "Cookie":            "PHPSESSID=123456789; ticket=xxxticket", // 设置cookie
+            },
+        })
+        if err != nil {
+            fmt.Println(err)
+        } else {
+            respBody, _ := resp.GetBody()
+            // 获取接口响应内容
+            fmt.Println(respBody.GetContents())
+        }
+    }
+
+写法4:
+    package main
+    
+    import (
+        "fmt"
+        "github.com/jellycheng/gcurl"
+        "net/http"
+    )
+    
+    func main() {
+        resp, err := gcurl.Get("http://qsh.xxx.com/gpc.php?a=1&b=hi123", gcurl.Options{
+            // 设置请求头
+            Headers: map[string]interface{}{
+                "User-Agent":        "gcurl/1.0",
+                "Accept":            gcurl.ContentTypeJson,
+                "X-USERID":          123456,
+                "X-Tag":             []string{"go", "php", "java"},
+                gcurl.TraceIdHeader: "traceid-abc-123-xyz",
+            },
+            Cookies: []*http.Cookie{ // 设置cookie
+                {Name: "PHPSESSID", Value: "123456789"},
+                {Name: "ticket", Value: "xxxticket"},
+            },
+        })
+        if err != nil {
+            fmt.Println(err)
+        } else {
+            respBody, _ := resp.GetBody()
+            // 获取接口响应内容
+            fmt.Println(respBody.GetContents())
+        }
+    }
+
+```

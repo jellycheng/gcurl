@@ -163,6 +163,9 @@ func (r *Request) parseQuery() {
 }
 
 func (r *Request) parseCookies() {
+	if r.options.Cookies == nil {
+		return
+	}
 	switch r.options.Cookies.(type) {
 	case string:
 		cookies := r.options.Cookies.(string)
