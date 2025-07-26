@@ -14,6 +14,7 @@ const (
 
 const (
 	TraceIdHeader = "X-Trace-Id"
+	ELLIPSES      = "..."
 )
 
 const (

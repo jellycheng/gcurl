@@ -2,6 +2,7 @@ package gcurl
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -39,4 +40,15 @@ func IsAllowFileExt(ext string, allowExt string) bool {
 // 拼接阿里云oss和腾讯云cos的图片地址
 func PingImgUrl(endpoint, bucketKey string) string {
 	return fmt.Sprintf("%s/%s", strings.TrimRight(endpoint, "/"), bucketKey)
+}
+
+func FileExistAndSize(filename string) (int64, bool, error) {
+	f, err := os.Stat(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, false, nil
+		}
+		return 0, false, err
+	}
+	return f.Size(), true, nil
 }
