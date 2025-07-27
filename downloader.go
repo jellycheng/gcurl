@@ -25,9 +25,10 @@ type Downloader struct {
 	RequestTimeout  time.Duration     // 超时时间
 	Headers         map[string]string // 请求头,User-Agent、Referer、Content-Type、Cookie、Authorization等
 	RawCookie       string            // cookie
+	ExtInfo         interface{}       // 扩展信息
 
-	DownSizeCallbackFunc func(int64)                                   // 下载进度回调
-	SaveCallbackFunc     func(*http.Response, *os.File) (int64, error) // 保存文件回调
+	DownSizeCallbackFunc func(*Downloader, int64)                                   // 下载大小回调
+	SaveCallbackFunc     func(*Downloader, *http.Response, *os.File) (int64, error) // 保存文件回调
 
 }
 
@@ -52,7 +53,7 @@ func (m *Downloader) Save() error {
 	}
 	if exists && fileSize == m.Size { // 文件已经下载完成
 		if m.DownSizeCallbackFunc != nil {
-			m.DownSizeCallbackFunc(fileSize)
+			m.DownSizeCallbackFunc(m, fileSize)
 		}
 		return nil
 	}
@@ -70,7 +71,7 @@ func (m *Downloader) Save() error {
 		m.Headers["Range"] = fmt.Sprintf("bytes=%d-", tempFileSize)
 		osFileObj, fileError = os.OpenFile(tempFilePath, os.O_APPEND|os.O_WRONLY, 0644)
 		if m.DownSizeCallbackFunc != nil {
-			m.DownSizeCallbackFunc(tempFileSize)
+			m.DownSizeCallbackFunc(m, tempFileSize)
 		}
 		//downloader.bar.Add64(tempFileSize)
 	} else {
@@ -134,10 +135,13 @@ func (m *Downloader) writeFile(osFileObj *os.File) (int64, error) {
 		return 0, err
 	}
 	if m.SaveCallbackFunc != nil {
-		return m.SaveCallbackFunc(resp, osFileObj)
+		return m.SaveCallbackFunc(m, resp, osFileObj)
 	}
 	defer resp.Body.Close()
 	written, err := io.Copy(osFileObj, resp.Body)
+	if m.DownSizeCallbackFunc != nil {
+		m.DownSizeCallbackFunc(m, written)
+	}
 	return written, err
 }
 
@@ -234,7 +238,7 @@ func (m *Downloader) GetContentType() (string, string, error) {
 	return strings.Split(s, ";")[0], s, nil
 }
 
-func DefaultSaveCallback(resp *http.Response, osFileObj *os.File) (int64, error) {
+func DefaultSaveCallback(m *Downloader, resp *http.Response, osFileObj *os.File) (int64, error) {
 	var respReader io.ReadCloser
 	switch resp.Header.Get("Content-Encoding") {
 	case "gzip":
@@ -246,5 +250,8 @@ func DefaultSaveCallback(resp *http.Response, osFileObj *os.File) (int64, error)
 	}
 	defer respReader.Close()
 	written, err := io.Copy(osFileObj, respReader)
+	if m.DownSizeCallbackFunc != nil {
+		m.DownSizeCallbackFunc(m, written)
+	}
 	return written, err
 }
