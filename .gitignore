@@ -17,3 +17,4 @@ cjs_test.go
 cjs.go
 go.sum
 .DS_Store
+xxx.bin
