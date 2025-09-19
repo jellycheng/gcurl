@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	resp, err := gcurl.Get("http://devapi.nfangbian.com/test.php?a=1&b=hi123")
+	resp, err := gcurl.Get("http://api.xxx.com/test.php?a=1&b=hi123")
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -39,7 +39,7 @@ import (
 )
 
 func main() {
-	if resp, err := gcurl.Get("http://devapi.nfangbian.com/test.php?a=100&b=b200", gcurl.Options{
+	if resp, err := gcurl.Get("http://api.xxx.com/test.php?a=100&b=b200", gcurl.Options{
 		// 追加和覆盖get参数
 		Query: map[string]interface{}{
 			"user": "123",
@@ -79,7 +79,7 @@ import (
 
 func main() {
 
-	resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+	resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 		Headers: map[string]interface{}{
 			//"Content-Type": "application/x-www-form-urlencoded",
 			"Content-Type": gcurl.ContentTypeForm,
@@ -123,7 +123,7 @@ import (
 )
 
 func main() {
-	resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php", gcurl.Options{
+	resp, err := gcurl.Post("http://api.xxx.com/test.php", gcurl.Options{
 		Query: map[string]interface{}{
 			"user": 123,
 			"tags[]": []string{"学习力", "tagN"},
@@ -158,7 +158,7 @@ import (
 )
 
 func main() {
-	resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+	resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 		Headers: map[string]interface{}{
 			"User-Agent":    "gcurl/1.0",
 			"Authorization": "Bearer access_token1234",
@@ -200,7 +200,7 @@ import (
 func main() {
 	// json字符串
 	strJson := `{"age":26,"name":"账号admin123"}`
-	if resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+	if resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 		Headers: map[string]interface{}{
 			"User-Agent":    "gcurl/1.0",
 			"Authorization": "Bearer access_token1234",
@@ -233,7 +233,7 @@ import (
 
 func main() {
 
-	if resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+	if resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 		Headers: map[string]interface{}{
 			"User-Agent":    "gcurl/1.0",
 			"Authorization": "Bearer access_token1234",
@@ -274,7 +274,7 @@ func main() {
 	jsonrpcReqDto := gcurl.NewJsonRpcReqDto()
 	jsonrpcReqDto.Method = `user\info`
 	jsonrpcReqDto.Params = "hello"
-	if resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+	if resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 		Headers: map[string]interface{}{
 			"User-Agent":    "gcurl/1.0/jsonrpc2.0",
 			gcurl.TraceIdHeader: "traceid-123",
@@ -309,7 +309,7 @@ func main() {
 	ctx1, _ := context.WithCancel(context.Background())
 	wg.RunApi(ctx1, func(ctx2 context.Context) {
 		// 接口1
-		resp, err := gcurl.Get("http://devapi.nfangbian.com/test.php?a=1&b=hi123")
+		resp, err := gcurl.Get("http://api.xxx.com/test.php?a=1&b=hi123")
 		if err != nil {
 			result.Store("api_1", err.Error())
 		} else {
@@ -322,7 +322,7 @@ func main() {
 	
 	wg.RunApi(ctx1, func(ctx2 context.Context) {
 		// 接口2
-		resp, err := gcurl.Post("http://devapi.nfangbian.com/test.php?a=2&b=say123", gcurl.Options{
+		resp, err := gcurl.Post("http://api.xxx.com/test.php?a=2&b=say123", gcurl.Options{
 			Headers: map[string]interface{}{
 				"Content-Type":      gcurl.ContentTypeForm,
 				"User-Agent":        "gcurl/1.0",
@@ -539,5 +539,36 @@ func main() {
             fmt.Println(respBody.GetContents())
         }
     }
+
+```
+
+## 设置body示例
+```
+package main
+
+import (
+	"fmt"
+	"github.com/jellycheng/gcurl"
+	"strings"
+)
+
+func main() {
+	if resp, err := gcurl.Post("http://api.xxx.com/hlog/elog?a=123", gcurl.Options{
+		Headers: map[string]interface{}{
+			"User-Agent": "gcurl/1.0",
+			"Accept":     "application/octet-stream",
+			"X-USERID":   123456,
+		},
+		DefaultBody: strings.NewReader("840420f8000045dbe9871029bd8f8d3377c5752591b79a592a52"),
+	}); err == nil {
+		fmt.Printf("请求参数：%s \r\n", resp.GetRequest().URL.RawQuery)
+		respBodyObj, _ := resp.GetBody()
+		fmt.Println("响应结果：", string(respBodyObj.ToByte()))
+
+	} else {
+		fmt.Println(err)
+	}
+
+}
 
 ```

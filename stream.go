@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func SendPostData4StreamV1(urlStr string, byteCon []byte) (content []byte, err error) {
+func SendPostData4StreamV1(urlStr string, byteCon []byte) (content []byte, h http.Header, err error) {
 	payload := strings.NewReader(string(byteCon))
 	client := &http.Client{
 		Timeout: 15 * time.Second,
@@ -23,6 +23,7 @@ func SendPostData4StreamV1(urlStr string, byteCon []byte) (content []byte, err e
 		return
 	}
 	defer res.Body.Close()
+	h = res.Header
 	content, err = io.ReadAll(res.Body)
 	if err != nil {
 		return

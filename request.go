@@ -53,10 +53,13 @@ func (r *Request) Request(method, uri string, opts ...Options) (*Response, error
 	if r.options.Headers == nil {
 		r.options.Headers = make(map[string]interface{})
 	}
+	if r.options.DefaultBody != nil {
+		r.body = r.options.DefaultBody
+	}
 
 	switch method {
 	case http.MethodGet, http.MethodDelete:
-		req, err := http.NewRequest(method, uri, nil)
+		req, err := http.NewRequest(method, uri, r.body)
 		if err != nil {
 			return nil, err
 		}
@@ -286,4 +289,8 @@ func (r *Request) GetOptions() Options {
 
 func (r *Request) SetOptions(o Options) {
 	r.options = o
+}
+
+func (r *Request) SetBody(bodyObj io.Reader) {
+	r.body = bodyObj
 }
